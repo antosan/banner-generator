@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banner Generator</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap');
+
+      body {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 32px 0;
+      }
+      .image {
+        width: 100%;
+        border: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Banner Generator</h2>
+
+      <form id="form">
+        <label for="meetup">Meetup #:</label>
+        <input type="number" name="meetup" id="meetup" min="1" max="1000" required />
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" required />
+        <input type="submit" value="Submit" />
+      </form>
+
+      <div id="root"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById('form');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const meetup = formData.get('meetup');
+        const date = formData.get('date');
+
+        await fetchImages(meetup, date);
+      });
+
+      async function fetchImages(meetup, date) {
+        try {
+          const res = await fetch(`${window.location.origin}/api/banner?meetup=${meetup}&date=${date}`);
+
+          if (res.ok) {
+            const image = await res.json();
+
+            document.getElementById('root').innerHTML = imagesTemplate(image);
+          } else {
+            const error = await res.json();
+
+            document.getElementById('root').innerHTML = errorTemplate(error.message);
+          }
+        } catch (error) {
+          document.getElementById('root').innerHTML = errorTemplate(error.message);
+        }
+      }
+
+      function imagesTemplate(image) {
+        return `
+          <div class="wrapper">
+            <div>
+              <img src="${image.banner}" alt="banner" class="image" />
+              <a href="${image.banner}" download="banner"> Download banner.png </a>
+            </div>
+            <div>
+              <img src="${image.poster}" alt="poster" class="image" />
+              <a href="${image.poster}" download="poster"> Download poster.png </a>
+            </div>
+          </div>
+        `;
+      }
+
+      function errorTemplate(message) {
+        return `<div class="wrapper"><p role="alert">${message}</p></div>`;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/banner.ts": {
+      "includeFiles": "_files/**"
+    }
+  }
+}
