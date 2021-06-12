@@ -17,7 +17,7 @@ GET /api/banner?meetup=1&date=2021-06-12
 
 ## Demo
 
-https://banner-generator.vercel.app/
+https://banner-generator-nu.vercel.app/
 
 ## Run Locally
 
